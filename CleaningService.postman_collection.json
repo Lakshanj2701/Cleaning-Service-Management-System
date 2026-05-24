@@ -1,0 +1,300 @@
+{
+  "info": {
+    "name": "Cleaning Service API",
+    "_postman_id": "cleaning-service-api-collection",
+    "description": "Full API collection for the Cleaning Service Booking Platform backend.",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "variable": [
+    {
+      "key": "baseUrl",
+      "value": "http://localhost:5000",
+      "type": "string"
+    },
+    {
+      "key": "token",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "serviceId",
+      "value": "",
+      "type": "string"
+    },
+    {
+      "key": "bookingId",
+      "value": "",
+      "type": "string"
+    }
+  ],
+  "item": [
+    {
+      "name": "Health Check",
+      "item": [
+        {
+          "name": "GET / — API Health Check",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/",
+              "host": ["{{baseUrl}}"],
+              "path": [""]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Services",
+      "item": [
+        {
+          "name": "GET /api/services — Get All Services",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (Array.isArray(json) && json.length > 0) {",
+                  "  pm.collectionVariables.set('serviceId', json[0]._id);",
+                  "  console.log('serviceId set to:', json[0]._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/services — Create a Service",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Balcony Cleaning\",\n  \"description\": \"Complete balcony and outdoor area cleaning.\",\n  \"price\": 55,\n  \"image\": \"https://images.unsplash.com/photo-1558618666-fcd25c85cd64?w=600\",\n  \"category\": \"residential\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/services",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "services"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Bookings",
+      "item": [
+        {
+          "name": "POST /api/bookings — Submit a Booking",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.booking && json.booking._id) {",
+                  "  pm.collectionVariables.set('bookingId', json.booking._id);",
+                  "  console.log('bookingId set to:', json.booking._id);",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"service\": \"{{serviceId}}\",\n  \"name\": \"John Doe\",\n  \"phone\": \"0771234567\",\n  \"address\": \"123 Main Street, Colombo 03\",\n  \"date\": \"2024-12-25\",\n  \"time\": \"10:00 AM\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/bookings — Missing Fields (400 Test)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"name\": \"Jane Smith\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "bookings"]
+            }
+          },
+          "response": []
+        }
+      ]
+    },
+    {
+      "name": "Admin",
+      "item": [
+        {
+          "name": "POST /api/admin/login — Admin Login",
+          "event": [
+            {
+              "listen": "test",
+              "script": {
+                "exec": [
+                  "const json = pm.response.json();",
+                  "if (json.token) {",
+                  "  pm.collectionVariables.set('token', json.token);",
+                  "  console.log('JWT token saved automatically.');",
+                  "}"
+                ],
+                "type": "text/javascript"
+              }
+            }
+          ],
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"admin123\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "POST /api/admin/login — Wrong Password (401 Test)",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": "{\n  \"username\": \"admin\",\n  \"password\": \"wrongpassword\"\n}"
+            },
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/login",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "login"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/admin/bookings — Get All Bookings (Protected)",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "bookings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "GET /api/admin/bookings — No Token (401 Test)",
+          "request": {
+            "method": "GET",
+            "header": [],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/bookings",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "bookings"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "PATCH /api/admin/bookings/:id — Mark as Completed",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "bookings", "{{bookingId}}"]
+            }
+          },
+          "response": []
+        },
+        {
+          "name": "DELETE /api/admin/bookings/:id — Delete Booking",
+          "request": {
+            "method": "DELETE",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer {{token}}"
+              }
+            ],
+            "url": {
+              "raw": "{{baseUrl}}/api/admin/bookings/{{bookingId}}",
+              "host": ["{{baseUrl}}"],
+              "path": ["api", "admin", "bookings", "{{bookingId}}"]
+            }
+          },
+          "response": []
+        }
+      ]
+    }
+  ]
+}
