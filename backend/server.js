@@ -10,6 +10,7 @@ app.use(cors());
 app.use(express.json());
 
 // Mount routes
+app.use('/api/auth',     require('./routes/auth'));
 app.use('/api/services', require('./routes/services'));
 app.use('/api/bookings', require('./routes/bookings'));
 app.use('/api/admin',    require('./routes/admin'));
